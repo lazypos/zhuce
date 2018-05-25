@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>用户注册</title>
+	<meta http-equiv="keywords" content="">
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<link rel="stylesheet" href="./layui/css/layui.css">
+	<link rel="stylesheet" href="./layui/css/jquery.slider.css">
+	<style type="text/css">
+		body {
+			text-align: center;
+			margin: 0;
+		}
+		.maindiv {
+			margin-top: 60px;
+		}
+		.foot{
+			padding-top: 20px; 
+			color: #ddd; 
+			font-size: 14px;
+		}
+		.kuang{
+			margin: auto;
+			border: solid 1px #ccc;
+			padding: 20px;
+			width: 300px;
+			background-color: #f8f8f8;
+		}
+		.cverity{
+			margin-top: -3px;
+			margin-left: 10px;
+			width: 163px;
+		}
+		.cyanzh{
+			width: 122px;
+			display: inline;
+			margin-top: 10px;
+		}
+		.slider{
+			margin-top: 10px;
+		}
+		#ilogin{
+			margin-top: 18px;
+		}
+		#idenglu{
+			margin-top: 10px;
+			width: 300px;
+			margin-left: 0px;
+		}
+		.cpass{
+			margin-top: 10px;
+		}
+		.crpass{
+			margin-top: 10px;
+		}
+		#ibody{
+			position: fixed;
+			height: 100%;
+			width: 100%;
+		}
+		#ibj{
+			position: fixed;
+			height: 100%;
+			width: 100%;
+			z-index: -9999;
+		}
+		.cimg{
+			width: 460px;
+			height: 200px;
+		}
+		.cjizhu{
+			height: 38px;
+			padding-top: 15px;
+			float: left;
+		}
+		.cjizhu span{
+			padding: 0 8px;
+		}
+		.layui-form-checkbox[lay-skin=primary] span{
+			padding-right: 10px;
+		}
+		#izhuce{
+			float: left;
+			margin-top: 10px;
+			margin-left: 30px;
+			height: 28px;
+		}
+		#iwangji{
+			margin-top: 10px;
+			margin-left: 0px;
+			float: right;
+			height: 28px;
+		}
+		#ireg{
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body id="ibody">
+	<div id="ibj"></div>
+	<div class="maindiv">
+		<div><img src="./images/logo.png" class="cimg" /></div>
+		<div class="kuang">
+			<!-- <input type="text" placeholder="请输入您的手机号" class="layui-input cphone" />
+			<div id="slider1" class="slider"></div>
+			<input type="text" placeholder="验证码" class="layui-input cyanzh" />
+			<button id="iver" class="layui-btn layui-btn-normal cverity layui-btn-disabled" onclick="verity()">向该手机发送验证码</button>
+			<input type="password" placeholder="密码" class="layui-input cpass" />
+			<input type="password" placeholder="重复密码" class="layui-input crpass" />
+			<button id="ilogin" class="layui-btn layui-btn-sm" onclick="login()">已有账号</button>
+			<span style="padding: 0 67px;"> </span>
+			<button id="ireg" class="layui-btn layui-btn-normal layui-btn-disabled" onclick="regist()">立即注册</button> -->
+
+			<input type="text" placeholder="手机号" class="layui-input cphone" />
+			<input type="password" placeholder="密码" class="layui-input cpass" />
+			<div id="slider1" class="slider"></div>
+			<div class="layui-unselect layui-form-checkbox layui-form-checked cjizhu" lay-skin="primary" onclick="oncheck()"><span>记住用户密码</span><i class="layui-icon layui-icon-ok">&#xe605;</i></div>
+			<button id="izhuce" class="layui-btn layui-btn-sm" onclick="zhuce()">没有账号</button>
+			<button id="iwangji" class="layui-btn layui-btn-sm" onclick="wangji()">忘记密码</button>
+			<button id="idenglu" class="layui-btn layui-btn-normal layui-btn-disabled" onclick="denglu()">立即登录</button>
+		</div>
+		<div class="foot">www.tuiliwu.cn <span>京ICP证030173号</span></div>
+	</div>
+<script src="./layui/layui.js"></script>
+<script src="./layui/jquery-1.7.2.min.js"></script>
+<script src="./layui/jquery.slider.min.js"></script>
+<script src="./layui/jquery.timers.js"></script>
+<script src="./layui/vector.js"></script>
+<script src="./layui/jquery.cookie.js"></script>
+<script type="text/javascript">
+	layui.use('element', function(){});
+	layui.use('layer', function(){});
+
+	$(function(){
+		var victor = new Victor("ibody", "ibj");
+		victor(["#015b9e", "#fff"]).set();
+
+		var user = $.cookie("tlwuser");
+		var pass = $.cookie("tlwpass");
+		$('.cphone').val(user)
+		$('.cpass').val(pass)
+	});
+
+	$("#slider1").slider({
+		callback: function(result) {
+			if (result) {
+				$('#iver').removeClass("layui-btn-disabled");
+				$('#idenglu').removeClass("layui-btn-disabled");
+				$('#ireg').removeClass("layui-btn-disabled");
+			}
+		}
+	});
+	var t = 180
+	function timefunc(){
+		if (t < 1) {
+			$('body').stopTime();
+			$('#iver').removeClass("layui-btn-disabled");
+			$('#iver').text("向该手机发送验证码");
+			t = 180;
+		}else{
+			t--;
+			$('#iver').text("请在("+t+")秒后重试");
+		}
+	}
+	function verity(){
+		if (!$('#iver').hasClass("layui-btn-disabled")) {
+			$('#iver').addClass("layui-btn-disabled");
+			t--
+			$('#iver').text("请在("+t+")秒后重试");
+			$('body').everyTime('1s', timefunc);
+		}else{
+			if (t==180) {
+				layer.tips('请先拖动滑块进行验证', '.slider', {
+				 	tips: [1, '#f7b24c'],
+				  	time: 2000
+				});
+			}
+		}
+	}
+	function regist(){
+		if ($('#ireg').hasClass("layui-btn-disabled")) {
+			layer.tips('请先拖动滑块进行验证', '.slider', {
+			 	tips: [1, '#f7b24c'],
+			  	time: 2000
+			});
+		}
+	}
+	function zhuce(){
+		var url = "";
+		 $.get(url, function(data, status){ 
+		 	if (data.error == 0) {
+				window.location.href=data.message+"?"+Date.parse(new Date());
+		 	}else{
+		 		window.location.href='regist.html';
+		 	}
+		 });
+	}
+	function denglu(){
+		if ($('#idenglu').hasClass("layui-btn-disabled")) {
+			layer.tips('请先拖动滑块进行验证', '.slider', {
+			 	tips: [1, '#f7b24c'],
+			  	time: 2000
+			});
+			return
+		}else{
+			//保存用户密码
+			if ($('.cwangji').hasClass("layui-form-checked")) {
+				var user = $('.cphone').val();
+				var pass = $('.cpass').val();
+				$.cookie("tlwuser", user, { expires: 14});
+				$.cookie("tlwpass", pass, { expires: 14}); 
+			}
+
+			$("#slider1").slider("restore");
+			$('#ireg').addClass("layui-btn-disabled")
+		}
+	}
+	function login(){
+		window.location.href='index.html';
+	}
+	function oncheck(){
+		if ($('.cjizhu').hasClass("layui-form-checked")) {
+			$('.cjizhu').removeClass("layui-form-checked");
+		}else{
+			$('.cjizhu').addClass("layui-form-checked");
+		}
+	}
+</script>
+</body>
+</html>
